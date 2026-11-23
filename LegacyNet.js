@@ -2493,7 +2493,7 @@
   }
 
   var LegacyNet = {
-    version: "1.0.1",
+    version: "1.0.2",
     capabilities: capabilities,
     limits: freezeSafe({
       missingProtocols: [
