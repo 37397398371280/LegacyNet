@@ -1,0 +1,20 @@
+{
+  "name": "legacynet",
+  "version": "1.0.0",
+  "description": "LegacyNet package",
+  "type": "module",
+  "main": "./LegacyNet.js",
+  "exports": {
+    ".": "./LegacyNet.js"
+  },
+  "files": [
+    "LegacyNet.js",
+    "LICENSE"
+  ],
+  "keywords": [],
+  "license": "GPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/37397398371280/LegacyNet.git"
+  }
+}
