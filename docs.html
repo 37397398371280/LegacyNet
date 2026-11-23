@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LegacyNet (v1.0.1) — Full Technical Documentation</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-alt: #162032;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-2: #818cf8;
+      --code-bg: #0b1120;
+      --badge-bg: rgba(56, 189, 248, 0.12);
+      --badge-border: rgba(56, 189, 248, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    aside.sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--surface-alt);
+      border-right: 1px solid var(--border);
+      padding: 24px 18px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .brand {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .version-pill {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: var(--accent);
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-border);
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 18px;
+    }
+
+    .nav-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 16px 0 8px;
+      font-weight: 600;
+    }
+
+    nav a {
+      display: block;
+      color: var(--text);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    nav a:hover {
+      background: rgba(148, 163, 184, 0.12);
+      color: #ffffff;
+    }
+
+    main.content {
+      flex: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 36px 40px 80px;
+    }
+
+    header.doc-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+    }
+
+    header.doc-header h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      color: #ffffff;
+    }
+
+    header.doc-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    section {
+      margin-bottom: 42px;
+    }
+
+    h2 {
+      font-size: 1.4rem;
+      color: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin: 0 0 16px;
+    }
+
+    h3 {
+      font-size: 1.08rem;
+      color: var(--accent);
+      margin: 22px 0 10px;
+    }
+
+    ul {
+      padding-left: 22px;
+      margin: 8px 0 16px;
+    }
+
+    li {
+      margin-bottom: 7px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88em;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      color: #7dd3fc;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+      overflow-x: auto;
+      margin: 14px 0 20px;
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      padding: 0;
+      color: #e2e8f0;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+
+    .callout {
+      background: var(--surface);
+      border-left: 4px solid var(--accent-2);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 820px) {
+      .layout {
+        flex-direction: column;
+      }
+      aside.sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      main.content {
+        padding: 24px 20px 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand">LegacyNet</div>
+      <div class="version-pill">v1.0.1</div>
+      <div class="nav-title">Contents</div>
+      <nav>
+        <a href="#architecture">1. Architecture &amp; ES3 Contract</a>
+        <a href="#metadata">2. Metadata &amp; Capabilities</a>
+        <a href="#async">3. Async Flow &amp; Combinators</a>
+        <a href="#json">4. JSON &amp; Raw JSON</a>
+        <a href="#http">5. HTTP Client (request)</a>
+        <a href="#websockets">6. WebSockets (connectSocket)</a>
+        <a href="#webrtc">7. WebRTC, STUN/TURN &amp; SDP</a>
+        <a href="#utils">8. Utility Reference</a>
+        <a href="#example">9. End-to-End Example</a>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <header class="doc-header">
+        <h1><code>LegacyNet</code> (<code>v1.0.1</code>) Full Technical Documentation</h1>
+        <p>Single-file networking, asynchronous flow, WebRTC/STUN/TURN engine, and cross-edition JavaScript utility library targeting ECMAScript 3 through ECMAScript 2026 (ES26).</p>
+      </header>
+
+      <section id="architecture">
+        <h2>1. Architecture &amp; ES3 Compatibility Contract</h2>
+        <p><code>LegacyNet</code> (<code>v1.0.1</code>) is a self-contained networking, asynchronous flow, WebRTC/STUN/TURN engine, and cross-edition JavaScript utility library targeting <strong>ECMAScript 3 through ECMAScript 2026 (ES26)</strong>.</p>
+
+        <h3>Syntax &amp; Runtime Rules</h3>
+        <ul>
+          <li><strong>Strict ES3 source syntax:</strong> Uses <code>var</code>, <code>function</code>, plain prototype methods, and bracket property access (<code>["catch"]</code>, <code>["finally"]</code>, <code>["try"]</code>, <code>["delete"]</code>) so legacy engines and strict ES3 parsers can parse the file without <code>SyntaxError</code>. No <code>let</code>/<code>const</code>, arrow functions, <code>async</code>/<code>await</code>, classes, optional chaining, or nullish coalescing are used in the library source.</li>
+          <li><strong>Feature-bridged execution:</strong> At load time, <code>detectCapabilities()</code> inspects the host environment and populates <code>LegacyNet.capabilities</code>. Methods delegate to native host APIs when present and fall back to from-scratch ES3 implementations when absent.</li>
+          <li><strong>Host &amp; protocol boundaries (<code>LegacyNet.limits</code>):</strong> Plain ES3 JavaScript cannot open raw UDP/TCP sockets or execute native DTLS/SRTP crypto or ICE packet transport on its own; connecting over real networks and STUN/TURN/WebRTC relies on host capabilities (<code>fetch</code>, <code>XMLHttpRequest</code> / <code>ActiveXObject</code>, <code>WebSocket</code>, <code>RTCPeerConnection</code> and prefixed variants), while Same-Origin Policy, CORS, and TLS are enforced by the host.</li>
+        </ul>
+      </section>
+
+      <section id="metadata">
+        <h2>2. Top-Level Metadata &amp; Capability Inspection</h2>
+
+        <h3><code>LegacyNet.version</code></h3>
+        <p>String identifier currently set to <code>"1.0.1"</code>.</p>
+
+        <h3><code>LegacyNet.capabilities</code></h3>
+        <p>Snapshot object returned by <code>detectCapabilities()</code> at startup:</p>
+        <ul>
+          <li><strong>Edition summary:</strong> <code>detectedEdition</code> reports the highest detected feature tier across <code>"ES2026/ES17+"</code>, <code>"ES16/ES2025+"</code>, <code>"ES15/ES2024+"</code>, <code>"ES14/ES2023+"</code>, <code>"ES13/ES2022+"</code>, <code>"ES12/ES2021+"</code>, <code>"ES11/ES2020+"</code>, <code>"ES10/ES2019+"</code>, <code>"ES8/ES2017+"</code>, <code>"ES7/ES2016+"</code>, <code>"ES6+"</code>, <code>"ES5+"</code>, and <code>"ES3"</code>.</li>
+          <li><strong>Language &amp; standard flags:</strong> <code>es5ArrayIsArray</code>, <code>es5Json</code>, <code>es5ObjectKeys</code>, <code>es5DateNow</code>, <code>es6Promise</code>, <code>es6ObjectAssign</code>, <code>es7Includes</code>, <code>es8ObjectEntries</code>, <code>es10Flat</code>, <code>es11GlobalThis</code>, <code>es12ReplaceAll</code>, <code>es13At</code>, <code>es14ArrayCopy</code>, <code>es15GroupBy</code>, <code>es16PromiseTry</code>.</li>
+          <li><strong>ES2026 flags:</strong> <code>es2026ErrorIsError</code>, <code>es2026MathSumPrecise</code>, <code>es2026FromAsync</code>, <code>es2026Uint8Base64</code>, <code>es2026JsonRaw</code>, <code>es2026MapGetOrInsert</code>, <code>es2026IteratorConcat</code>.</li>
+          <li><strong>Transport &amp; media flags:</strong> <code>fetch</code>, <code>xhr</code> (<code>XMLHttpRequest</code> or IE <code>ActiveXObject</code> XMLHTTP), <code>abortController</code>, <code>webSocket</code>, <code>rtcPeerConnection</code>, <code>rtcPrefixed</code>, <code>formData</code>, <code>blob</code>, <code>arrayBuffer</code>, and <code>streams</code>.</li>
+        </ul>
+
+        <h3><code>LegacyNet.limits</code></h3>
+        <p>Frozen (when <code>Object.freeze</code> is available) reference object exposing <code>missingProtocols</code> and <code>securityEnforcedByHost</code>.</p>
+      </section>
+
+      <section id="async">
+        <h2>3. Asynchronous Flow &amp; Combinators</h2>
+        <p><code>Deferred</code> provides promise-like chaining (<code>then</code>, <code>["catch"]</code>, <code>["finally"]</code>), async reaction scheduling via <code>setTimeout(..., 0)</code> (falling back to direct invocation when unavailable), self-resolution guards, thenable unwrapping, and cancellation.</p>
+
+        <h3><code>Deferred</code> Methods</h3>
+        <ul>
+          <li><code>.then(onFulfilled, onRejected)</code> -&gt; <code>Deferred</code>: Registers fulfillment and rejection handlers and returns a chained <code>Deferred</code>.</li>
+          <li><code>["catch"](onRejected)</code> -&gt; <code>Deferred</code>: Equivalent to <code>.then(null, onRejected)</code>.</li>
+          <li><code>["finally"](onFinally)</code> -&gt; <code>Deferred</code>: Runs a cleanup callback on fulfillment or rejection (awaiting returned thenables) while preserving the original value or error.</li>
+          <li><code>.abort(reason)</code> -&gt; <code>void</code>: Marks the <code>Deferred</code> aborted, calls <code>onAbort(reason)</code> if provided, and rejects with an <code>Error</code> having <code>err.code = "ABORTED"</code>.</li>
+          <li><code>.toNativePromise()</code> -&gt; <code>Promise | null</code>: Wraps the <code>Deferred</code> in <code>root.Promise</code> when available, or returns <code>null</code>.</li>
+        </ul>
+
+        <h3>Top-Level Async Helpers</h3>
+        <ul>
+          <li><code>LegacyNet.deferred(onAbort)</code> -&gt; <code>Deferred</code>: Creates a new <code>Deferred</code>.</li>
+          <li><code>LegacyNet.all(items)</code> -&gt; <code>Deferred</code>: Resolves with an array of values when all items fulfill; rejects on the first rejection.</li>
+          <li><code>LegacyNet.race(items)</code> -&gt; <code>Deferred</code>: Settles with the first item to fulfill or reject.</li>
+          <li><code>LegacyNet.any(items)</code> -&gt; <code>Deferred</code>: Resolves with the first fulfilled item; if all reject, rejects with an <code>Error</code> whose <code>.errors</code> array contains each rejection reason.</li>
+          <li><code>LegacyNet.allSettled(items)</code> -&gt; <code>Deferred</code>: Resolves with <code>{ status: "fulfilled", value }</code> or <code>{ status: "rejected", reason }</code> objects once all items settle.</li>
+          <li><code>LegacyNet.withResolvers()</code> -&gt; <code>object</code>: Returns <code>{ promise, nativePromise, resolve, reject }</code>, coordinating with <code>Promise.withResolvers</code> when present.</li>
+          <li><code>LegacyNet.tryCall(fn, thisArg, argsArr)</code> -&gt; <code>Deferred</code>: Executes <code>fn</code> asynchronously and resolves with its result or rejects with any thrown error.</li>
+          <li><code>LegacyNet.fromAsync(source, mapFn, thisArg)</code> -&gt; <code>Deferred</code>: Uses <code>Array.fromAsync</code> when available, or maps array-like/single values into a resolved <code>Deferred</code> array.</li>
+        </ul>
+      </section>
+
+      <section id="json">
+        <h2>4. JSON &amp; Raw JSON (<code>LegacyNet.json</code>)</h2>
+        <ul>
+          <li><code>LegacyNet.json.stringify(val)</code> -&gt; <code>string</code>: Serializes raw JSON wrappers directly, delegates to <code>JSON.stringify</code> when present, or uses <code>es3Stringify</code> across primitives, arrays, and own enumerable keys.</li>
+          <li><code>LegacyNet.json.parse(text, reviver)</code> -&gt; <code>any</code>: Delegates to <code>JSON.parse</code> when present, or runs regex-validated <code>es3Parse</code> with recursive <code>reviver</code> support and <code>{ source }</code> context metadata.</li>
+          <li><code>LegacyNet.json.rawJSON(rawText)</code> -&gt; <code>object</code>: Uses <code>JSON.rawJSON</code> when available, or returns <code>{ __legacyRawJson: String(rawText) }</code>.</li>
+          <li><code>LegacyNet.json.isRawJSON(val)</code> -&gt; <code>boolean</code>: Checks <code>JSON.isRawJSON</code> when available or detects the internal raw JSON wrapper.</li>
+        </ul>
+      </section>
+
+      <section id="http">
+        <h2>5. HTTP Client (<code>LegacyNet.request</code>)</h2>
+        <p><code>LegacyNet.request(opts, callback)</code> returns a <code>Deferred</code> and optionally invokes <code>callback(err, payload)</code>.</p>
+
+        <h3>Options (<code>opts</code>)</h3>
+        <ul>
+          <li><code>url</code> (<code>string</code>), <code>method</code> (<code>string</code>, default <code>"GET"</code>), <code>params</code> (<code>object</code> serialized to <code>key=value</code> query string).</li>
+          <li><code>headers</code> (<code>object</code>): Sets <code>Content-Type: application/json</code> automatically for non-binary/<code>FormData</code> plain objects or raw JSON wrappers on non-<code>GET</code>/<code>HEAD</code> requests unless already specified.</li>
+          <li><code>body</code> (<code>any</code>): Stringifies plain objects/raw JSON wrappers; passes <code>FormData</code>, <code>Blob</code>, <code>ArrayBuffer</code>, <code>ArrayBufferView</code>, or strings through.</li>
+          <li><code>transport</code> (<code>string</code>): Set to <code>"xhr"</code> to bypass <code>fetch</code> even if <code>fetch</code> exists; otherwise <code>fetch</code> is preferred, falling back to <code>XMLHttpRequest</code> and then IE <code>ActiveXObject</code> (<code>Msxml2.XMLHTTP.6.0</code>, <code>Msxml2.XMLHTTP.3.0</code>, <code>Microsoft.XMLHTTP</code>).</li>
+          <li><code>responseType</code> (<code>string</code>): <code>"text"</code> (default), <code>"json"</code>, <code>"arraybuffer"</code>, or <code>"blob"</code>.</li>
+          <li><code>parseJson</code> (<code>boolean</code>) and <code>reviver</code> (<code>function</code>): Parses string bodies into <code>payload.json</code> via <code>safeParse</code>.</li>
+          <li><code>credentials</code> (<code>string</code>), <code>withCredentials</code> (<code>boolean</code>), <code>failOnHttpError</code> (<code>boolean</code>), and <code>cause</code> (<code>any</code>, attached via <code>withCause</code>).</li>
+          <li><code>timeout</code> (<code>number</code> in ms), <code>retries</code> (<code>number</code>), and <code>retryDelay</code> (<code>number</code>, default <code>250</code> ms): Retries transient transport failures, timeouts (<code>err.timeout = true</code>), and HTTP statuses <code>408</code>, <code>429</code>, and <code>500&ndash;599</code> with linear backoff (<code>retryDelay * attempt</code>), without retrying user aborts (<code>err.code === "ABORTED"</code>).</li>
+        </ul>
+
+        <h3>Response &amp; Cancellation</h3>
+        <ul>
+          <li>Resolved payload: <code>{ status, ok, body, stream, transport, readStream }</code> (plus <code>.json</code> when parsed).</li>
+          <li><code>payload.readStream(onChunk, onDone)</code> streams chunks via <code>ReadableStream.getReader()</code> when available or emits the buffered XHR text once.</li>
+          <li>Calling <code>req.abort(reason)</code> clears timers, aborts <code>AbortController</code> or <code>xhr</code>, and rejects the <code>Deferred</code>.</li>
+        </ul>
+      </section>
+
+      <section id="websockets">
+        <h2>6. WebSockets (<code>LegacyNet.connectSocket</code>)</h2>
+        <p><code>LegacyNet.connectSocket(url, protocols, sockOpts)</code> -&gt; <code>Deferred</code>:</p>
+        <ul>
+          <li>Rejects if <code>root.WebSocket</code> is unavailable or construction fails.</li>
+          <li>Applies optional <code>sockOpts.binaryType</code> and optional <code>sockOpts.pingInterval</code> + <code>sockOpts.pingPayload</code> (default <code>'{"type":"ping"}'</code>), sending heartbeats while <code>socket.readyState === 1</code> and clearing the interval on close, error, or <code>stopPing()</code>.</li>
+          <li>Resolves with <code>{ socket, event, stopPing }</code>.</li>
+        </ul>
+      </section>
+
+      <section id="webrtc">
+        <h2>7. WebRTC, STUN/TURN, SDP &amp; Signaling Engine (<code>LegacyNet.rtc</code>)</h2>
+        <p><code>LegacyNet.rtc</code> provides ES3-written helpers and a peer/signaling engine that connects to real STUN/TURN servers and remote WebRTC peers through the host's peer connection implementation (<code>RTCPeerConnection</code>, <code>webkitRTCPeerConnection</code>, or <code>mozRTCPeerConnection</code>).</p>
+
+        <h3>ICE, STUN &amp; TURN Helpers</h3>
+        <ul>
+          <li><code>LegacyNet.rtc.hasNativeWebRtc</code> (<code>boolean</code>): Whether a supported peer connection constructor was detected at load time.</li>
+          <li><code>LegacyNet.rtc.parseIceUrl(rawUrl)</code> -&gt; <code>object | null</code>: Parses <code>stun:</code>, <code>stuns:</code>, <code>turn:</code>, and <code>turns:</code> URLs (IPv4, bracketed IPv6, explicit or default ports <code>3478</code>/<code>5349</code>, and <code>?transport=</code> query params) into <code>{ raw, scheme, isTurn, isTls, host, port, transport }</code>.</li>
+          <li><code>LegacyNet.rtc.normalizeIceServers(input)</code> -&gt; <code>object</code>: Normalizes string or <code>{ urls, username, credential, credentialType }</code> server entries and returns <code>{ iceServers, stunServers, turnServers }</code>.</li>
+          <li><code>LegacyNet.rtc.createStunTransactionId()</code> -&gt; <code>string</code>: Generates a 12-byte (96-bit) hex transaction ID.</li>
+        </ul>
+
+        <h3>SDP &amp; ICE Candidate Helpers</h3>
+        <ul>
+          <li><code>LegacyNet.rtc.buildSdp(opts)</code> -&gt; <code>string</code>: Builds a CRLF-delimited SDP offer or answer with session/media lines (<code>v=</code>, <code>o=</code>, <code>s=</code>, <code>t=</code>, <code>m=application ... UDP/DTLS/SCTP webrtc-datachannel</code>, <code>c=</code>, <code>a=ice-ufrag:</code>, <code>a=ice-pwd:</code>, <code>a=fingerprint:</code>, <code>a=setup:</code>, <code>a=mid:</code>, <code>a=sctp-port:</code>, <code>a=max-message-size:</code>, and optional <code>a=candidate:</code> lines).</li>
+          <li><code>LegacyNet.rtc.parseSdp(sdpText)</code> -&gt; <code>object</code>: Extracts <code>version</code>, <code>origin</code>, <code>sessionName</code>, <code>iceUfrag</code>, <code>icePwd</code>, <code>fingerprint</code>, <code>setup</code>, <code>mid</code>, <code>sctpPort</code>, <code>mediaSections</code>, and <code>candidates</code>.</li>
+          <li><code>LegacyNet.rtc.normalizeCandidate(candInput)</code> -&gt; <code>object | null</code>: Normalizes string or object candidates into <code>{ candidate, sdpMid, sdpMLineIndex, usernameFragment }</code>.</li>
+        </ul>
+
+        <h3><code>LegacyNet.rtc.createEngine(opts)</code></h3>
+        <p>Creates a peer and signaling controller configured with <code>{ iceServers, rtcConfig, sendSignal, autoAnswer, emitEndOfCandidates }</code>:</p>
+        <ul>
+          <li><strong>Properties:</strong> <code>hasNativeWebRtc</code>, <code>peerConnection</code>, <code>iceServers</code>, <code>stunServers</code>, <code>turnServers</code>, <code>localCandidates</code>, <code>channels</code>.</li>
+          <li><strong>State &amp; channels:</strong> <code>getState()</code> returns <code>{ connectionState, iceGatheringState, remoteDescriptionSet, queuedCandidates }</code>; <code>createDataChannel(label, channelOpts)</code> creates and wraps a channel with <code>{ label, channel, readyState, send, close }</code>.</li>
+          <li><strong>Negotiation &amp; signaling:</strong>
+            <ul>
+              <li><code>createOffer(offerOpts)</code> -&gt; <code>Deferred</code> and <code>createAnswer(answerOpts)</code> -&gt; <code>Deferred</code>: Support both Promise-returning and callback-style host WebRTC APIs, set local descriptions, emit/send <code>{ type, sdp, parsed }</code> signals, and mark ICE gathering as <code>"gathering"</code>.</li>
+              <li><code>handleSignal(signalMsg)</code> -&gt; <code>Deferred</code>: Parses JSON strings via <code>safeParse</code> if needed and handles <code>"offer"</code>, <code>"answer"</code> (auto-answering when <code>autoAnswer !== false</code>), <code>"candidate"</code> (buffering candidates until <code>setRemoteDescription</code> completes, then flushing them), and <code>"end-of-candidates"</code>.</li>
+              <li><code>addRemoteCandidate(rawCandidate)</code> -&gt; <code>Deferred</code>: Normalizes and queues or adds a remote ICE candidate.</li>
+            </ul>
+          </li>
+          <li><strong>Events &amp; teardown:</strong> <code>on(eventName, fn)</code>, <code>off(eventName, fn)</code> for <code>"stateChange"</code>, <code>"iceGatheringStateChange"</code>, <code>"iceCandidate"</code>, <code>"signal"</code>, <code>"dataChannel"</code>, <code>"message"</code>, <code>"track"</code>, <code>"error"</code>, and <code>"close"</code>; <code>close()</code> closes data channels and the peer connection and emits <code>"close"</code>.</li>
+        </ul>
+      </section>
+
+      <section id="utils">
+        <h2>8. Utility Reference (<code>LegacyNet.utils</code>)</h2>
+        <ul>
+          <li><strong>Objects, errors &amp; maps:</strong> <code>globalObj</code>, <code>isArray</code>, <code>isError</code>, <code>merge</code>, <code>keys</code>, <code>values</code>, <code>entries</code>, <code>fromEntries</code>, <code>freezeSafe</code>, <code>now</code>, <code>withCause</code>, <code>mapGetOrInsert</code>, <code>mapGetOrInsertComputed</code>.</li>
+          <li><strong>Arrays &amp; iterables:</strong> <code>includes</code>, <code>flat</code>, <code>flatMap</code>, <code>at</code>, <code>toReversed</code>, <code>toSorted</code>, <code>toSpliced</code>, <code>withItem</code>, <code>findLast</code>, <code>findLastIndex</code>, <code>groupBy</code>, <code>concatIterables</code>.</li>
+          <li><strong>Strings, precision math &amp; binary:</strong> <code>replaceAll</code>, <code>isWellFormed</code>, <code>toWellFormed</code>, <code>sumPrecise</code>, <code>toHex</code>, <code>fromHex</code>, <code>toBase64</code>, <code>fromBase64</code>, <code>isBinaryOrFormData</code>, <code>readStreamChunks</code>.</li>
+        </ul>
+      </section>
+
+      <section id="example">
+        <h2>9. End-to-End Usage Example</h2>
+        <pre><code>var rtc = LegacyNet.rtc.createEngine({
+  iceServers: [
+    { urls: "stun:stun.l.google.com:19302" },
+    {
+      urls: ["turn:turn.example.com:3478?transport=udp", "turns:turn.example.com:5349?transport=tcp"],
+      username: "ephemeral-user",
+      credential: "ephemeral-secret"
+    }
+  ],
+  sendSignal: function (msg) {
+    LegacyNet.request({
+      url: "https://example.com/signal",
+      method: "POST",
+      body: msg,
+      timeout: 3000,
+      retries: 1
+    });
+  }
+});
+
+rtc.on("dataChannel", function (ch) {
+  ch.send(LegacyNet.json.stringify({
+    edition: LegacyNet.capabilities.detectedEdition,
+    preciseSum: LegacyNet.utils.sumPrecise([0.1, 0.2, 0.3]),
+    b64: LegacyNet.utils.toBase64([111, 107])
+  }));
+});
+
+rtc.on("message", function (ev) {
+  // Handle incoming data channel message ev.data on channel ev.label
+});
+
+rtc.createDataChannel("control");
+rtc.createOffer()["catch"](function (err) {
+  // Handle missing WebRTC support or negotiation error
+});</code></pre>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
