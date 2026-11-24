@@ -1,6 +1,6 @@
 {
   "name": "legacynet",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "LegacyNet package",
   "type": "module",
   "main": "./LegacyNet.js",
